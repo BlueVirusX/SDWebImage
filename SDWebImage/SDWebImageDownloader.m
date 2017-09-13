@@ -154,6 +154,7 @@
 
 - (nullable SDWebImageDownloadToken *)downloadImageWithURL:(nullable NSURL *)url
                                                    options:(SDWebImageDownloaderOptions)options
+                                     additionalHTTPHeaders:(nullable SDHTTPHeadersDictionary *)additionalHTTPHeaders
                                                   progress:(nullable SDWebImageDownloaderProgressBlock)progressBlock
                                                  completed:(nullable SDWebImageDownloaderCompletedBlock)completedBlock {
     __weak SDWebImageDownloader *wself = self;
@@ -179,12 +180,18 @@
         
         request.HTTPShouldHandleCookies = (options & SDWebImageDownloaderHandleCookies);
         request.HTTPShouldUsePipelining = YES;
+        SDHTTPHeadersMutableDictionary *HTTPHeaders = sself.HTTPHeaders;
+        if (additionalHTTPHeaders) {
+            HTTPHeaders = [HTTPHeaders mutableCopy];
+            [HTTPHeaders addEntriesFromDictionary:additionalHTTPHeaders];
+        }
         if (sself.headersFilter) {
-            request.allHTTPHeaderFields = sself.headersFilter(url, [sself.HTTPHeaders copy]);
+            request.allHTTPHeaderFields = sself.headersFilter(url, [HTTPHeaders copy]);
         }
         else {
-            request.allHTTPHeaderFields = sself.HTTPHeaders;
+            request.allHTTPHeaderFields = HTTPHeaders;
         }
+        NSLog(@"headers: %@", [request.allHTTPHeaderFields description]);
         SDWebImageDownloaderOperation *operation = [[sself.operationClass alloc] initWithRequest:request inSession:sself.session options:options];
         operation.shouldDecompressImages = sself.shouldDecompressImages;
         
@@ -228,7 +235,7 @@
     // The URL will be used as the key to the callbacks dictionary so it cannot be nil. If it is nil immediately call the completed block with no image or data.
     if (url == nil) {
         if (completedBlock != nil) {
-            completedBlock(nil, nil, nil, NO);
+            completedBlock(nil, nil, nil, nil, NO);
         }
         return nil;
     }

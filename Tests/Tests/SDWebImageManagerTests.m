@@ -29,8 +29,9 @@ NSString *workingImageURL = @"http://s3.amazonaws.com/fast-image-cache/demo-imag
     
     [[SDWebImageManager sharedManager] loadImageWithURL:originalImageURL
                                                 options:SDWebImageRefreshCached
+                                  additionalHTTPHeaders:nil
                                                progress:nil
-                                              completed:^(UIImage *image, NSData *data, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
+                                              completed:^(UIImage *image, NSData *data, SDHTTPHeadersDictionary *responseHeaders, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
         expect(image).toNot.beNil();
         expect(error).to.beNil();
         expect(originalImageURL).to.equal(imageURL);
@@ -50,8 +51,9 @@ NSString *workingImageURL = @"http://s3.amazonaws.com/fast-image-cache/demo-imag
     
     [[SDWebImageManager sharedManager] loadImageWithURL:originalImageURL
                                                 options:SDWebImageRefreshCached
+                                  additionalHTTPHeaders:nil
                                                progress:nil
-                                              completed:^(UIImage *image, NSData *data, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
+                                              completed:^(UIImage *image, NSData *data, SDHTTPHeadersDictionary *responseHeaders, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
         expect(image).to.beNil();
         expect(error).toNot.beNil();
         expect(originalImageURL).to.equal(imageURL);
@@ -93,7 +95,7 @@ NSString *workingImageURL = @"http://s3.amazonaws.com/fast-image-cache/demo-imag
     XCTestExpectation *expectation = [self expectationWithDescription:@"Cancel"];
     
     NSURL *imageURL = [NSURL URLWithString:@"http://s3.amazonaws.com/fast-image-cache/demo-images/FICDDemoImage006.jpg"];
-    [[SDWebImageManager sharedManager] loadImageWithURL:imageURL options:0 progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+    [[SDWebImageManager sharedManager] loadImageWithURL:imageURL options:0 additionalHTTPHeaders:nil progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, SDHTTPHeadersDictionary * _Nullable responseHeaders, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
         XCTFail(@"Should not get here");
     }];
     
