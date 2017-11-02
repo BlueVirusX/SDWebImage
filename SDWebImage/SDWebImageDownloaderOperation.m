@@ -337,6 +337,7 @@ didReceiveResponse:(NSURLResponse *)response
                 if ([coder conformsToProtocol:@protocol(SDWebImageProgressiveCoder)] &&
                     [((id<SDWebImageProgressiveCoder>)coder) canIncrementallyDecodeFromData:imageData]) {
                     self.progressiveCoder = [[[coder class] alloc] init];
+                    break;
                 }
             }
         }
